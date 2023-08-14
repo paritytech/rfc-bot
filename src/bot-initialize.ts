@@ -17,8 +17,8 @@ export const botInitialize: ApplicationFunction = (bot: Probot, { getRouter }) =
 
   const state: State = {
     bot,
-    allowedGitHubOrg: envVar("APPROVERS_GH_ORG"),
-    allowedGitHubTeam: envVar("APPROVERS_GH_TEAM"),
+    allowedGitHubOrg: envVar("ALLOWED_GH_ORG"),
+    allowedGitHubTeam: envVar("ALLOWED_GH_TEAM"),
     matrix: {
       client: createClient({
         accessToken: envVar("MATRIX_ACCESS_TOKEN"),
