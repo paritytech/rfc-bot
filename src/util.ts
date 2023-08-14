@@ -10,8 +10,12 @@ export const teamMatrixHandles =
 
 /**
  * blake2-256 hash of the raw proposal text, as described in the [RFC process](https://github.com/polkadot-fellows/RFCs#process).
+ * @returns The hash without a "0x" prefix.
  */
-export const hashProposal = (proposal: string): string => blake2AsHex(proposal, 256);
+export const hashProposal = (proposal: string): string => {
+  const result = blake2AsHex(proposal, 256);
+  return result.startsWith("0x") ? result.slice(2) : result;
+};
 
 // https://stackoverflow.com/a/52254083
 export const byteSize = (str: string): number => new Blob([str]).size;
