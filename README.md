@@ -6,7 +6,7 @@ Learn more about the RFC proposal process [here](https://github.com/polkadot-fel
 
 ## Contributing
 
-If you have suggestions for how substrate-tip-bot could be improved, or want to report a bug, open
+If you have suggestions for how the RFC bot could be improved, or want to report a bug, open
 an issue! We'd love all and any contributions.
 
 For more, check out the [Contributing Guide](CONTRIBUTING.md).
