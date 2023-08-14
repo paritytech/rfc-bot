@@ -5,13 +5,11 @@ import { IssueCommentCreatedEvent } from "@octokit/webhooks-types";
 import { matrixNotifyOnFailure, matrixNotifyOnNewRequest } from "./matrix";
 import { GithubReactionType, State } from "./types";
 
-type OnIssueCommentResult = { success: true; message: string } | { success: false; errorMessage: string };
-
 export const handleIssueCommentCreated = async (state: State, event: IssueCommentCreatedEvent): Promise<void> => {
   const [botMention] = event.comment.body.split(" ") as (string | undefined)[];
 
   // The bot only triggers on creation of a new comment on a pull request.
-  if (!event.issue.pull_request || event.action !== "created" || !botMention?.startsWith("/rfc-bot")) {
+  if (!event.issue.pull_request || event.action !== "created" || !botMention?.startsWith("/propose")) {
     return;
   }
 
@@ -19,7 +17,6 @@ export const handleIssueCommentCreated = async (state: State, event: IssueCommen
   const installationId = (
     await github.getRepoInstallation({ owner: event.repository.owner.login, repo: event.repository.name })
   ).id;
-
   const octokitInstance = await github.getInstance({
     authType: "installation",
     appId: envVar("GITHUB_APP_ID"),
@@ -32,7 +29,6 @@ export const handleIssueCommentCreated = async (state: State, event: IssueCommen
     repo: event.repository.name,
     issue_number: event.issue.number,
   };
-
   const githubComment = async (body: string) =>
     await github.createComment({ ...respondParams, body }, { octokitInstance });
   const githubEmojiReaction = async (reaction: GithubReactionType) =>
@@ -42,15 +38,44 @@ export const handleIssueCommentCreated = async (state: State, event: IssueCommen
     );
 
   await githubEmojiReaction("eyes");
-  // await matrixNotifyOnNewRequest(state.matrix, event);
+  await matrixNotifyOnNewRequest(state.matrix, event);
   try {
-    // Do the thing.
+    const result = await handleRFCReferendumRequest(state, event, requester, octokitInstance);
+    if (result.success) {
+      await githubComment(result.message);
+      await githubEmojiReaction("rocket");
+    } else {
+      await githubComment(result.errorMessage);
+      await githubEmojiReaction("confused");
+      await matrixNotifyOnFailure(state.matrix, event, { tagMaintainers: false });
+    }
   } catch (e) {
     state.bot.log.error(e.message);
     await githubComment(
       `@${requester} Creating RFC proposal referendum failed :( The team has been notified. Alternatively open an issue [here](https://github.com/paritytech/rfc-bot/issues/new).`,
     );
     await githubEmojiReaction("confused");
-    // await matrixNotifyOnFailure(state.matrix, event);
+    await matrixNotifyOnFailure(state.matrix, event, { tagMaintainers: true });
   }
+};
+
+export const handleRFCReferendumRequest = async (
+  state: State,
+  event: IssueCommentCreatedEvent,
+  requester: string,
+  octokitInstance: github.GitHubInstance,
+): Promise<{ success: true; message: string } | { success: false; errorMessage: string }> => {
+  if (
+    !(await github.isGithubTeamMember(
+      { org: state.allowedGitHubOrg, team: state.allowedGitHubTeam, username: requester },
+      { octokitInstance },
+    ))
+  ) {
+    return {
+      success: false,
+      errorMessage: `@${requester} You are not allowed to request an RFC referendum. Only members of ${state.allowedGitHubOrg}/${state.allowedGitHubTeam} are allowed.`,
+    };
+  }
+
+  return { success: true, message: "Hello world. Nothing happens yet." };
 };

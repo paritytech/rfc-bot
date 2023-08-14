@@ -1,5 +1,5 @@
 import { envVar } from "@eng-automation/js";
-import { ApplicationFunction, run } from "probot";
+import { run } from "probot";
 
 import { botInitialize } from "./bot-initialize";
 
@@ -12,6 +12,4 @@ process.env.GITHUB_APP_ID = process.env.APP_ID;
 process.env.GITHUB_AUTH_TYPE = "app";
 process.env.GITHUB_PRIVATE_KEY = process.env.PRIVATE_KEY;
 
-/* Probot types do not accept async function type,
-   but it seems that the actual code handles it properly. */
-void run(botInitialize as ApplicationFunction);
+void run(botInitialize);

@@ -6,11 +6,7 @@ import { handleIssueCommentCreated } from "./bot-handle-comment";
 import { addMetricsRoute } from "./metrics";
 import { State } from "./types";
 
-type AsyncApplicationFunction = (
-  ...params: Parameters<ApplicationFunction>
-) => Promise<ReturnType<ApplicationFunction>>;
-
-export const botInitialize: AsyncApplicationFunction = async (bot: Probot, { getRouter }) => {
+export const botInitialize: ApplicationFunction = (bot: Probot, { getRouter }) => {
   bot.log.info("Loading RFC bot...");
   const router = getRouter?.("/rfc-bot");
   if (router) {
@@ -21,6 +17,8 @@ export const botInitialize: AsyncApplicationFunction = async (bot: Probot, { get
 
   const state: State = {
     bot,
+    allowedGitHubOrg: envVar("APPROVERS_GH_ORG"),
+    allowedGitHubTeam: envVar("APPROVERS_GH_TEAM"),
     matrix: {
       client: createClient({
         accessToken: envVar("MATRIX_ACCESS_TOKEN"),
