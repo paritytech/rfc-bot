@@ -19,9 +19,7 @@
     "fix": "yarn fix:eslint '{*,**/*}.{js,ts}' && yarn fix:prettier '{*,**/*}.json'",
     "start": "nodemon",
     "build": "rimraf dist; tsc",
-    "test": "NODE_OPTIONS='--experimental-vm-modules --es-module-specifier-resolution=node' jest",
-    "test:integration": "NODE_OPTIONS='--experimental-vm-modules --es-module-specifier-resolution=node' jest -c jest.integration.config.js",
-    "test:e2e": "NODE_OPTIONS='--experimental-vm-modules --es-module-specifier-resolution=node' jest -c jest.e2e.config.js"
+    "test": "NODE_OPTIONS='--experimental-vm-modules --es-module-specifier-resolution=node' jest"
   },
   "dependencies": {
     "@eng-automation/integrations": "^4.2.2",
