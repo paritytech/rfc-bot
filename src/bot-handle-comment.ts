@@ -9,7 +9,7 @@ export const handleIssueCommentCreated = async (state: State, event: IssueCommen
   const [botMention] = event.comment.body.split(" ") as (string | undefined)[];
 
   // The bot only triggers on creation of a new comment on a pull request.
-  if (!event.issue.pull_request || event.action !== "created" || !botMention?.startsWith("/propose")) {
+  if (!event.issue.pull_request || event.action !== "created" || !botMention?.startsWith("/rfc-propose")) {
     return;
   }
 
