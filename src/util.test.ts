@@ -1,6 +1,6 @@
 import * as fs from "fs";
 
-import { hashProposal } from "./util";
+import { extractCommitHash, hashProposal } from "./util";
 
 describe("Utility functions", () => {
   describe("hashProposal", () => {
@@ -14,5 +14,11 @@ describe("Utility functions", () => {
 
       expect(hashProposal(rfcText)).toEqual(expectedHash);
     });
+  });
+
+  it("extracts commit hash", () => {
+    const rawUrl =
+      "https://github.com/paritytech-stg/RFCs/raw/210dd4c3d4a83443e8e35e47b5f67a7f9dc0a9d1/text%2F0005-coretime-interface-test.md";
+    expect(extractCommitHash(rawUrl)).toEqual("210dd4c3d4a83443e8e35e47b5f67a7f9dc0a9d1");
   });
 });

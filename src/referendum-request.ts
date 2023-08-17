@@ -4,6 +4,7 @@ import fetch from "node-fetch";
 
 import { createReferendumTx } from "./referendum-tx";
 import { State } from "./types";
+import { extractCommitHash } from "./util";
 
 export const handleRFCReferendumRequest = async (
   state: State,
@@ -11,8 +12,11 @@ export const handleRFCReferendumRequest = async (
   requester: string,
   octokitInstance: github.GitHubInstance,
 ): Promise<{ success: true; message: string } | { success: false; errorMessage: string }> => {
-  const userError = (message: string) => ({ success: false, errorMessage: `@${requester} ${message}` } as const);
-  const prNumber = event.issue.number.toString().padStart(4, "0"); // e.g. 0005
+  const userError = (message: string) =>
+    ({
+      success: false,
+      errorMessage: `@${requester} ${message} Please double check the [Process](https://github.com/polkadot-fellows/RFCs#process)`,
+    } as const);
 
   const addedMarkdownFiles = (
     await octokitInstance.rest.pulls.listFiles({
@@ -25,18 +29,22 @@ export const handleRFCReferendumRequest = async (
     return userError("RFC markdown file was not found in the PR.");
   }
   if (addedMarkdownFiles.length > 1) {
-    return userError(
-      "More than one markdown file was found in the PR. Please double check the [Process](https://github.com/polkadot-fellows/RFCs#process)",
-    );
+    return userError("More than one markdown file was found in the PR.");
   }
   const rfcFile = addedMarkdownFiles[0];
   const rawText = await (await fetch(rfcFile.raw_url)).text();
+  const rfcNumber: string | undefined = rfcFile.filename.split("-")[0];
+  if (rfcNumber === undefined) {
+    return userError("Failed to read the RFC number from the filename.");
+  }
 
-  const { transactionCreationUrl } = await createReferendumTx({ rfcProposalText: rawText, prNumber });
+  const { transactionCreationUrl } = await createReferendumTx({ rfcProposalText: rawText, rfcNumber });
 
   const message =
-    `## Approve RFC${prNumber} ${event.issue.title}` +
-    `\n\nApprove [RFC${prNumber}](${event.issue.html_url}) at commit hash ${rfcFile.sha}.` +
+    `## Approve RFC${rfcNumber} ${event.issue.title}` +
+    `\n\nApprove [RFC${rfcNumber}](${event.issue.html_url}) at commit hash [${extractCommitHash(rfcFile.raw_url)}](${
+      rfcFile.raw_url
+    }).` +
     `\n\n[Referendum transaction creation link](${transactionCreationUrl})`;
 
   return { success: true, message };

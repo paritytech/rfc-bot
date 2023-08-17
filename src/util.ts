@@ -19,3 +19,12 @@ export const hashProposal = (proposal: string): string => {
 
 // https://stackoverflow.com/a/52254083
 export const byteSize = (str: string): number => new Blob([str]).size;
+
+/**
+ * Extracts commit hash from GitHub's raw url.
+ */
+export const extractCommitHash = (rawUrl: string): string => {
+  const match = rawUrl.match("raw/(.*)/text")?.[1];
+  if (match === undefined) throw new Error("Could not extract commit hash.");
+  return match;
+};

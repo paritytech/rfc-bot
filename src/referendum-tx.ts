@@ -18,13 +18,13 @@ const POLKADOT_APPS_URL = `https://polkadot.js.org/apps/?rpc=${encodeURIComponen
 const polkadotAppsDecodeURL = (transactionHex: string) => `${POLKADOT_APPS_URL}extrinsics/decode/${transactionHex}`;
 
 export const createReferendumTx = async (opts: {
-  prNumber: string;
+  rfcNumber: string;
   rfcProposalText: string;
 }): Promise<{ transactionHex: string; transactionCreationUrl: string }> => {
   const api = new ApiPromise();
   await api.isReadyOrError;
 
-  const remarkText = `APPROVE_RFC(${opts.prNumber},${hashProposal(opts.rfcProposalText)})`;
+  const remarkText = `APPROVE_RFC(${opts.rfcNumber},${hashProposal(opts.rfcProposalText)})`;
   const remarkTx = api.tx.system.remark(remarkText);
 
   const submitTx = api.tx.fellowshipReferenda.submit(
