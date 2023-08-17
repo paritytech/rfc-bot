@@ -1,0 +1,48 @@
+stages:
+  - test
+
+default:
+  interruptible:                   true
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - unknown_failure
+      - api_failure
+
+variables:
+  KUBE_NAMESPACE:                  "rfc-bot"
+  CI_REGISTRY:                     "docker.io/paritytech"
+  GIT_STRATEGY:                    fetch
+  CI_IMAGE:                        "docker.io/paritytech/eng-automation-ci:latest"
+  BUILDAH_IMAGE:                   "quay.io/buildah/stable:v1.29"
+  BUILDAH_COMMAND:                 "buildah --storage-driver overlay2"
+  DOCKERHUB_REPO:                  "paritytech"
+  IMAGE_NAME:                      docker.io/$DOCKERHUB_REPO/rfc-bot
+  DOCKER_TAG:                      "${CI_COMMIT_SHORT_SHA}"
+  VAULT_ADDR:                      "https://vault.parity-mgmt-vault.parity.io"
+  VAULT_AUTH_PATH:                 "gitlab-parity-io-jwt"
+  VAULT_AUTH_ROLE:                 "gitlab_${CI_PROJECT_NAME}"
+  HELM_SECRETS_DRIVER:             vals
+
+.common-refs:                      &common-refs
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_COMMIT_REF_NAME == "main"
+    - if: $CI_COMMIT_REF_NAME =~ /^v[0-9]+\.[0-9]+.*$/              # i.e. v1.0, v2.1rc1
+    - if: $CI_COMMIT_REF_NAME =~ /^[0-9]+$/                         # PRs
+
+check-linting:
+  stage:                           test
+  <<:                              *common-refs
+  script:
+    - yarn --frozen-lockfile
+    - yarn lint
+
+test-unit:
+  stage:                           test
+  <<:                              *common-refs
+  script:
+    - yarn --frozen-lockfile
+    - yarn test
