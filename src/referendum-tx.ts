@@ -24,7 +24,7 @@ export const createReferendumTx = async (opts: {
   const api = new ApiPromise();
   await api.isReadyOrError;
 
-  const remarkText = `APPROVE_RFC(${opts.rfcNumber},${hashProposal(opts.rfcProposalText)})`;
+  const remarkText = `RFC_APPROVE(${opts.rfcNumber},${hashProposal(opts.rfcProposalText)})`;
   const remarkTx = api.tx.system.remark(remarkText);
 
   const submitTx = api.tx.fellowshipReferenda.submit(
