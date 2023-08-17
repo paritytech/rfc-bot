@@ -65,16 +65,6 @@ export const handleRFCReferendumRequest = async (
   requester: string,
   octokitInstance: github.GitHubInstance,
 ): Promise<{ success: true; message: string } | { success: false; errorMessage: string }> => {
-  if (
-    !(await github.isGithubTeamMember(
-      { org: state.allowedGitHubOrg, team: state.allowedGitHubTeam, username: requester },
-      { octokitInstance },
-    ))
-  ) {
-    return {
-      success: false,
-      errorMessage: `@${requester} You are not allowed to request an RFC referendum. Only members of ${state.allowedGitHubOrg}/${state.allowedGitHubTeam} are allowed.`,
-    };
   }
 
   return { success: true, message: "Hello world. Nothing happens yet." };
