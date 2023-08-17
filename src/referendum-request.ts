@@ -24,7 +24,9 @@ export const handleRFCReferendumRequest = async (
       owner: event.repository.owner.login,
       pull_number: event.issue.number,
     })
-  ).data.filter((file) => file.status === "added" && file.filename.includes(".md"));
+  ).data.filter(
+    (file) => file.status === "added" && file.filename.startsWith("text/") && file.filename.includes(".md"),
+  );
   if (addedMarkdownFiles.length < 1) {
     return userError("RFC markdown file was not found in the PR.");
   }
@@ -33,7 +35,7 @@ export const handleRFCReferendumRequest = async (
   }
   const rfcFile = addedMarkdownFiles[0];
   const rawText = await (await fetch(rfcFile.raw_url)).text();
-  const rfcNumber: string | undefined = rfcFile.filename.split("-")[0];
+  const rfcNumber: string | undefined = rfcFile.filename.split("text/")[1].split("-")[0];
   if (rfcNumber === undefined) {
     return userError("Failed to read the RFC number from the filename.");
   }

@@ -38,5 +38,6 @@ export const createReferendumTx = async (opts: {
   transactionHex = transactionHex.replace("1700", "3d00"); // fellowshipReferenda.submit call index
   transactionHex = transactionHex.replace("2b0f", "3e01"); // {Origins: 'Fellows'} changed to {FellowshipOrigins: 'Fellows'}
 
+  await api.disconnect();
   return { transactionHex, transactionCreationUrl: polkadotAppsDecodeURL(transactionHex) };
 };
