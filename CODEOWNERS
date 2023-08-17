@@ -1,0 +1,5 @@
+* @paritytech/opstooling
+
+# CI
+/.gitlab-ci.yml @paritytech/ci @paritytech/opstooling
+/.github @paritytech/ci @paritytech/opstooling
