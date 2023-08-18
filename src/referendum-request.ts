@@ -31,23 +31,28 @@ export const handleRFCReferendumRequest = async (
     return userError("RFC markdown file was not found in the PR.");
   }
   if (addedMarkdownFiles.length > 1) {
-    return userError(`The system can only parse **one** markdown file but more than one were found: ${addedMarkdownFiles.map(file => file.filename).join(",")}. Please, reduce the number of files to **one file** for the system to work.`);
+    return userError(
+      `The system can only parse **one** markdown file but more than one were found: ${addedMarkdownFiles
+        .map((file) => file.filename)
+        .join(",")}. Please, reduce the number of files to **one file** for the system to work.`,
+    );
   }
   const [rfcFile] = addedMarkdownFiles;
   const rawText = await (await fetch(rfcFile.raw_url)).text();
   const rfcNumber: string | undefined = rfcFile.filename.split("text/")[1].split("-")[0];
   if (rfcNumber === undefined) {
-    return userError("Failed to read the RFC number from the filename. Please follow the format: `NNNN-name.md`. Example: `0001-example-proposal.md`");
+    return userError(
+      "Failed to read the RFC number from the filename. Please follow the format: `NNNN-name.md`. Example: `0001-example-proposal.md`",
+    );
   }
 
-  const { transactionCreationUrl } = await createReferendumTx({ rfcProposalText: rawText, rfcNumber });
+  const { transactionCreationUrl, remarkText } = await createReferendumTx({ rfcProposalText: rawText, rfcNumber });
 
   const message =
-    `## Approve RFC${rfcNumber} ${event.issue.title}` +
-    `\n\nApprove [RFC${rfcNumber}](${event.issue.html_url}) at commit hash [${extractCommitHash(rfcFile.raw_url)}](${
-      rfcFile.raw_url
-    }).` +
-    `\n\n[Referendum transaction creation link](${transactionCreationUrl})`;
+    `Hey @${requester}, ` +
+    `[here is a link](${transactionCreationUrl}) you can use to create the referendum aiming to approve this RFC number ${rfcNumber}.` +
+    `\n\n it is based on commit hash [${extractCommitHash(rfcFile.raw_url)}](${rfcFile.raw_url}).` +
+    `\n\nThe proposed remark text is: \`${remarkText}\`.`;
 
   return { success: true, message };
 };

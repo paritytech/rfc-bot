@@ -20,7 +20,7 @@ const polkadotAppsDecodeURL = (transactionHex: string) => `${POLKADOT_APPS_URL}e
 export const createReferendumTx = async (opts: {
   rfcNumber: string;
   rfcProposalText: string;
-}): Promise<{ transactionHex: string; transactionCreationUrl: string }> => {
+}): Promise<{ transactionHex: string; transactionCreationUrl: string; remarkText: string }> => {
   const api = new ApiPromise();
   await api.isReadyOrError;
 
@@ -44,5 +44,5 @@ export const createReferendumTx = async (opts: {
   transactionHex = transactionHex.replace("2b0f", "3e01"); // {Origins: 'Fellows'} changed to {FellowshipOrigins: 'Fellows'}
 
   await api.disconnect();
-  return { transactionHex, transactionCreationUrl: polkadotAppsDecodeURL(transactionHex) };
+  return { transactionHex, transactionCreationUrl: polkadotAppsDecodeURL(transactionHex), remarkText };
 };
