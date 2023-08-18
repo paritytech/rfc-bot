@@ -33,7 +33,7 @@ export const handleRFCReferendumRequest = async (
   if (addedMarkdownFiles.length > 1) {
     return userError("More than one markdown file was found in the PR.");
   }
-  const rfcFile = addedMarkdownFiles[0];
+  const [rfcFile] = addedMarkdownFiles;
   const rawText = await (await fetch(rfcFile.raw_url)).text();
   const rfcNumber: string | undefined = rfcFile.filename.split("text/")[1].split("-")[0];
   if (rfcNumber === undefined) {
