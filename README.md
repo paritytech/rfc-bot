@@ -14,3 +14,4 @@ For more, check out the [Contributing Guide](CONTRIBUTING.md).
 ## License
 
 [MIT](LICENSE) © 2021 Parity Technologies <admin@parity.io>
+
