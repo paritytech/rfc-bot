@@ -31,7 +31,7 @@ export const handleRFCReferendumRequest = async (
     return userError("RFC markdown file was not found in the PR.");
   }
   if (addedMarkdownFiles.length > 1) {
-    return userError(`The system can only parse **one** markdown file but more than one were found: ${JSON.stringify(addedMarkdownFiles)}. Please, reduce the number of files to **one file** for the system to work.`);
+    return userError(`The system can only parse **one** markdown file but more than one were found: ${addedMarkdownFiles.map(file => file.filename).join(",")}. Please, reduce the number of files to **one file** for the system to work.`);
   }
   const [rfcFile] = addedMarkdownFiles;
   const rawText = await (await fetch(rfcFile.raw_url)).text();
