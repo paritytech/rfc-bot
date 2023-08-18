@@ -9,8 +9,6 @@ default:
       - runner_system_failure
       - unknown_failure
       - api_failure
-  tags:
-    - kubernetes-parity-build
 
 variables:
   KUBE_NAMESPACE:                  "rfc-bot"
@@ -28,7 +26,6 @@ variables:
   HELM_SECRETS_DRIVER:             vals
 
 .common-refs:                      &common-refs
-  image: $CI_IMAGE
   rules:
     - if: $CI_PIPELINE_SOURCE == "web"
     - if: $CI_PIPELINE_SOURCE == "schedule"
@@ -36,9 +33,15 @@ variables:
     - if: $CI_COMMIT_REF_NAME =~ /^v[0-9]+\.[0-9]+.*$/              # i.e. v1.0, v2.1rc1
     - if: $CI_COMMIT_REF_NAME =~ /^[0-9]+$/                         # PRs
 
+.kubernetes-env:                   &kubernetes-env
+  image:                           $CI_IMAGE
+  tags:
+    - kubernetes-parity-build
+
 check-linting:
   stage:                           test
   <<:                              *common-refs
+  <<:                              *kubernetes-env
   script:
     - yarn --frozen-lockfile
     - yarn lint
@@ -46,6 +49,7 @@ check-linting:
 test-unit:
   stage:                           test
   <<:                              *common-refs
+  <<:                              *kubernetes-env
   script:
     - yarn --frozen-lockfile
     - yarn test
