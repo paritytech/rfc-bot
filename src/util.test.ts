@@ -5,7 +5,7 @@ import { extractCommitHash, hashProposal } from "./util";
 describe("Utility functions", () => {
   describe("hashProposal", () => {
     test("Properly hashes the RFC text", () => {
-      // https://raw.githubusercontent.com/xlc/RFCs/d4589ded275b721e33cbeb1e7a27e2f29899cdc3/text/0014-improve-locking-mechanism-for-parachains.md
+      // https://raw.githubusercontent.com/polkadot-fellows/RFCs/c368187e2b80c9b76a399f30127e866f47594ae8/text/0014-improve-locking-mechanism-for-parachains.md
       const rfcText = fs.readFileSync("src/examples/0014-improve-locking-mechanism-for-parachains.md").toString();
 
       // https://collectives.subsquare.io/fellowship/referendum/16
