@@ -3,6 +3,7 @@ import { envVar } from "@eng-automation/js";
 import { IssueCommentCreatedEvent } from "@octokit/webhooks-types";
 
 import { matrixNotifyOnFailure, matrixNotifyOnNewRequest } from "./matrix";
+import { handleRFCReferendumRequest } from "./referendum-request";
 import { GithubReactionType, State } from "./types";
 
 export const handleIssueCommentCreated = async (state: State, event: IssueCommentCreatedEvent): Promise<void> => {
@@ -31,11 +32,12 @@ export const handleIssueCommentCreated = async (state: State, event: IssueCommen
   };
   const githubComment = async (body: string) =>
     await github.createComment({ ...respondParams, body }, { octokitInstance });
-  const githubEmojiReaction = async (reaction: GithubReactionType) =>
+  const githubEmojiReaction = async (reaction: GithubReactionType) => {
     await github.createReactionForIssueComment(
       { ...respondParams, comment_id: event.comment.id, content: reaction },
       { octokitInstance },
     );
+  };
 
   await githubEmojiReaction("eyes");
   await matrixNotifyOnNewRequest(state.matrix, event);
@@ -57,25 +59,4 @@ export const handleIssueCommentCreated = async (state: State, event: IssueCommen
     await githubEmojiReaction("confused");
     await matrixNotifyOnFailure(state.matrix, event, { tagMaintainers: true });
   }
-};
-
-export const handleRFCReferendumRequest = async (
-  state: State,
-  event: IssueCommentCreatedEvent,
-  requester: string,
-  octokitInstance: github.GitHubInstance,
-): Promise<{ success: true; message: string } | { success: false; errorMessage: string }> => {
-  if (
-    !(await github.isGithubTeamMember(
-      { org: state.allowedGitHubOrg, team: state.allowedGitHubTeam, username: requester },
-      { octokitInstance },
-    ))
-  ) {
-    return {
-      success: false,
-      errorMessage: `@${requester} You are not allowed to request an RFC referendum. Only members of ${state.allowedGitHubOrg}/${state.allowedGitHubTeam} are allowed.`,
-    };
-  }
-
-  return { success: true, message: "Hello world. Nothing happens yet." };
 };

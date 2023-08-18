@@ -2,8 +2,6 @@ import type { MatrixClient } from "matrix-js-sdk";
 import { Probot } from "probot";
 
 export type State = {
-  allowedGitHubOrg: string;
-  allowedGitHubTeam: string;
   bot: Probot;
   matrix?:
     | {
