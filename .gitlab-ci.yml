@@ -9,6 +9,8 @@ default:
       - runner_system_failure
       - unknown_failure
       - api_failure
+  tags:
+    - kubernetes-parity-build
 
 variables:
   KUBE_NAMESPACE:                  "rfc-bot"
