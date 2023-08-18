@@ -7,7 +7,7 @@
 import "@polkadot/api-augment/kusama";
 import { ApiPromise } from "@polkadot/api";
 
-import { hashProposal } from "./util";
+import { byteSize, hashProposal } from "./util";
 
 /**
  * The URL is not used by the bot to connect to the chain.
@@ -26,6 +26,11 @@ export const createReferendumTx = async (opts: {
 
   const remarkText = `RFC_APPROVE(${opts.rfcNumber},${hashProposal(opts.rfcProposalText)})`;
   const remarkTx = api.tx.system.remark(remarkText);
+
+  if (byteSize(remarkTx) >= 128) {
+    // https://github.com/paritytech/substrate/blob/ae5085782b2981f35338ff6d4e5417e74c569377/frame/support/src/traits/preimages.rs#L27
+    throw new Error("Inlining proposal is limited to 128 bytes.");
+  }
 
   const submitTx = api.tx.fellowshipReferenda.submit(
     { Origins: "Fellows" },

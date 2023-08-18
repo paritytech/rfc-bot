@@ -1,3 +1,4 @@
+import { SubmittableExtrinsic } from "@polkadot/api/promise/types";
 import { blake2AsHex } from "@polkadot/util-crypto";
 
 /**
@@ -17,8 +18,8 @@ export const hashProposal = (proposal: string): string => {
   return result.startsWith("0x") ? result.slice(2) : result;
 };
 
-// https://stackoverflow.com/a/52254083
-export const byteSize = (str: string): number => new Blob([str]).size;
+export const byteSize = (extrinsic: SubmittableExtrinsic): number =>
+  extrinsic.method.toU8a().length * Uint8Array.BYTES_PER_ELEMENT;
 
 /**
  * Extracts commit hash from GitHub's raw url.
