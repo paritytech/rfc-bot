@@ -37,7 +37,7 @@ export const handleRFCReferendumRequest = async (
   const rawText = await (await fetch(rfcFile.raw_url)).text();
   const rfcNumber: string | undefined = rfcFile.filename.split("text/")[1].split("-")[0];
   if (rfcNumber === undefined) {
-    return userError("Failed to read the RFC number from the filename.");
+    return userError("Failed to read the RFC number from the filename. Please follow the format: `NNNN-name.md`. Example: `0001-example-proposal.md`");
   }
 
   const { transactionCreationUrl } = await createReferendumTx({ rfcProposalText: rawText, rfcNumber });
