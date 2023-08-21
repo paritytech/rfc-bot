@@ -1,6 +1,6 @@
 # rfc-bot
 
-## A GitHub App built with Probot that can submit rfc proposal referenda.
+## A GitHub bot built with Probot aiming to help in the creation of RFC proposal referenda.
 
 To run the bot via Docker:
 
