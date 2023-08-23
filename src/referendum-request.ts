@@ -51,7 +51,7 @@ export const handleRFCReferendumRequest = async (
   const message =
     `Hey @${requester}, ` +
     `[here is a link](${transactionCreationUrl}) you can use to create the referendum aiming to approve this RFC number ${rfcNumber}.` +
-    `\n\n it is based on commit hash [${extractCommitHash(rfcFile.raw_url)}](${rfcFile.raw_url}).` +
+    `\n\nIt is based on commit hash [${extractCommitHash(rfcFile.raw_url)}](${rfcFile.raw_url}).` +
     `\n\nThe proposed remark text is: \`${remarkText}\`.`;
 
   return { success: true, message };
