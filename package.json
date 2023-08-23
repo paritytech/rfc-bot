@@ -2,7 +2,7 @@
   "name": "@substrate/rfc-bot",
   "version": "0.0.0",
   "private": true,
-  "description": "A GitHub bot to submit rfc proposal referenda.",
+  "description": "A GitHub bot built with Probot aiming to help in the creation of RFC proposal referenda.",
   "author": "Parity Technologies <admin@parity.io> (https://parity.io)",
   "license": "MIT",
   "homepage": "https://github.com/paritytech/rfc-bot",

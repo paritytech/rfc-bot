@@ -1,0 +1,47 @@
+common:
+  fullnameOverride: "rfc-bot"
+  extraLabels:
+    team: "opstooling"
+  serviceAccount:
+    create: false
+  image:
+    repository: paritytech/rfc-bot
+  envFrom:
+    - secretRef:
+        name: rfc-bot
+  service:
+    ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+  ingress:
+    enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-dns01
+      kubernetes.io/ingress.class: traefik-external
+      traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+  livenessProbe:
+   httpGet:
+     path: /rfc-bot/health
+     port: http
+   initialDelaySeconds: 60
+   periodSeconds: 5
+  readinessProbe:
+   httpGet:
+     path: /rfc-bot/health
+     port: http
+   initialDelaySeconds: 60
+   periodSeconds: 5
+  serviceMonitor:
+    enabled: true
+    endpoints:
+      - port: http
+        path: /rfc-bot/metrics
+        interval: 1m
+        scheme: http
+        scrapeTimeout: 30s
+        honorLabels: true
+    targetLabels:
+      - team
