@@ -1,29 +1,29 @@
-common:
-  env:
-    APP_HOST: "https://rfc-bot.parity-stg.parity.io"
-    MATRIX_SERVER_URL: "https://m.parity.io"
-    MATRIX_ROOM_ID: "!KiTmXyGkdiLNzrzMgj:parity.io" # ENG: Engineering Automation -> Bot Test Farm
-  secrets:
-    # WEBHOOK_SECRET is used internally by probot: https://probot.github.io/docs/configuration/
-    WEBHOOK_SECRET: ref+vault://kv/gitlab/parity/mirrors/rfc-bot/opstooling-parity-stg#WEBHOOK_SECRET
-    PRIVATE_KEY: ref+vault://kv/gitlab/parity/mirrors/rfc-bot/opstooling-parity-stg#PRIVATE_KEY
-    APP_ID: ref+vault://kv/gitlab/parity/mirrors/rfc-bot/opstooling-parity-stg#APP_ID
-    MATRIX_ACCESS_TOKEN: ref+vault://kv/gitlab/parity/mirrors/rfc-bot/opstooling-parity-stg#MATRIX_ACCESS_TOKEN
-  ingress:
-    annotations:
-      external-dns.alpha.kubernetes.io/target: traefik-external.parity-stg.parity.io.
-    rules:
-      - host: rfc-bot.parity-stg.parity.io
-        http:
-          paths:
-            - path: /
-              pathType: ImplementationSpecific
-              backend:
-                service:
-                  name: rfc-bot
-                  port:
-                    name: http
-    tls:
-      - hosts:
-          - rfc-bot.parity-stg.parity.io
-        secretName: rfc-bot.parity-stg.parity.io
+# common:
+#   env:
+#     APP_HOST: "https://rfc-bot.parity-stg.parity.io"
+#     MATRIX_SERVER_URL: "https://m.parity.io"
+#     MATRIX_ROOM_ID: "!KiTmXyGkdiLNzrzMgj:parity.io" # ENG: Engineering Automation -> Bot Test Farm
+#   secrets:
+#     # WEBHOOK_SECRET is used internally by probot: https://probot.github.io/docs/configuration/
+#     WEBHOOK_SECRET: ref+vault://kv/gitlab/parity/mirrors/rfc-bot/opstooling-parity-stg#WEBHOOK_SECRET
+#     PRIVATE_KEY: ref+vault://kv/gitlab/parity/mirrors/rfc-bot/opstooling-parity-stg#PRIVATE_KEY
+#     APP_ID: ref+vault://kv/gitlab/parity/mirrors/rfc-bot/opstooling-parity-stg#APP_ID
+#     MATRIX_ACCESS_TOKEN: ref+vault://kv/gitlab/parity/mirrors/rfc-bot/opstooling-parity-stg#MATRIX_ACCESS_TOKEN
+#   ingress:
+#     annotations:
+#       external-dns.alpha.kubernetes.io/target: traefik-external.parity-stg.parity.io.
+#     rules:
+#       - host: rfc-bot.parity-stg.parity.io
+#         http:
+#           paths:
+#             - path: /
+#               pathType: ImplementationSpecific
+#               backend:
+#                 service:
+#                   name: rfc-bot
+#                   port:
+#                     name: http
+#     tls:
+#       - hosts:
+#           - rfc-bot.parity-stg.parity.io
+#         secretName: rfc-bot.parity-stg.parity.io

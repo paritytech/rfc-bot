@@ -163,13 +163,13 @@ publish-docker-image-description:
         $CI_PROJECT_NAME helm/
     - kubectl get pods -n ${CI_PROJECT_NAME}
 
-deploy-stg:
-  stage:                           staging
-  <<:                              *deploy-k8s
-  <<:                              *kubernetes-env
-  <<:                              *publish-deploy-stg-refs
-  variables:
-    CI_IMAGE:                      "paritytech/kubetools:3.5.3"
-    ENVIRONMENT:                   parity-stg
-  tags:
-    - rfc-bot-stg
+# deploy-stg:
+#   stage:                           staging
+#   <<:                              *deploy-k8s
+#   <<:                              *kubernetes-env
+#   <<:                              *publish-deploy-stg-refs
+#   variables:
+#     CI_IMAGE:                      "paritytech/kubetools:3.5.3"
+#     ENVIRONMENT:                   parity-stg
+#   tags:
+#     - rfc-bot-stg
